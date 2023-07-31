@@ -1,14 +1,27 @@
-package com.yallahnsafro.yallahnsafrobackend.shared.dto;
+package com.yallahnsafro.yallahnsafrobackend.entities;
 
+
+
+import javax.persistence.*;
 import java.io.Serializable;
 
-public class UserDto implements Serializable {
+@Entity
+@Table(name = "users", schema = "yallahnsafro_db")
+public class UserEntity implements Serializable {
+
     private static final long serialVersionUID = 6407688734661559517L;
+    @Id
+    @GeneratedValue
     private long id;
+    @Column(nullable = false, length = 50)
     private String firstname;
+    @Column(nullable = false, length = 50)
     private String lastname;
+    @Column(nullable = false)
     private String password;
+    @Column(nullable = false)
     private String email;
+    @Column(nullable = true, length = 10)
     private String phonenumber;
 
     public long getId() {
@@ -35,6 +48,14 @@ public class UserDto implements Serializable {
         this.lastname = lastname;
     }
 
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
     public String getEmail() {
         return email;
     }
@@ -49,13 +70,5 @@ public class UserDto implements Serializable {
 
     public void setPhonenumber(String phonenumber) {
         this.phonenumber = phonenumber;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
     }
 }

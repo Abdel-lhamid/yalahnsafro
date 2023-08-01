@@ -10,6 +10,15 @@ public class UserDto implements Serializable {
     private String password;
     private String email;
     private String phonenumber;
+    private String userType;
+
+    public String getUserType() {
+        return userType;
+    }
+
+    public void setUserType(String userType) {
+        this.userType = userType;
+    }
 
     public long getId() {
         return id;

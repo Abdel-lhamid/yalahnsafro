@@ -1,17 +1,18 @@
 package com.yallahnsafro.yallahnsafrobackend.services;
 
 import com.yallahnsafro.yallahnsafrobackend.shared.dto.UserDto;
-import org.apache.catalina.User;
-
-import java.util.Date;
+import java.util.List;
 
 public interface UserService {
 
 
-    UserDto createUserDto(UserDto userDto);
+    UserDto createUser(UserDto userDto);
 
-    UserDto getUserById(Long userId);
+    UserDto getUserById(long userId);
 
-    UserDto updateUserById(Long userId, UserDto userDto);
-    void deleteUser(Long userId);
+    UserDto updateUser(UserDto userDto);
+    void deleteUser(UserDto userDtoToDelete);
+    List<UserDto> getAllUsers();
+
+
 }

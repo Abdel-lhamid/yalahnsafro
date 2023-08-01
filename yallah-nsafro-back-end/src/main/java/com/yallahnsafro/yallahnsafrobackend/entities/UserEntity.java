@@ -24,6 +24,17 @@ public class UserEntity implements Serializable {
     @Column(nullable = true, length = 10)
     private String phonenumber;
 
+    @Column(nullable = false, length = 10)
+    private String userType;
+
+    public String getUserType() {
+        return userType;
+    }
+
+    public void setUserType(String userType) {
+        this.userType = userType;
+    }
+
     public long getId() {
         return id;
     }

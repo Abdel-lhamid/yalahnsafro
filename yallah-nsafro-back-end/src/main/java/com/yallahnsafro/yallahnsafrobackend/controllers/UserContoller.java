@@ -5,39 +5,45 @@ import com.yallahnsafro.yallahnsafrobackend.shared.dto.UserDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @RestController
-@RequestMapping("/users")
 public class UserContoller {
     @Autowired
     UserService userService;
 
-    @GetMapping("/{userId}")
-    public String getUserById(Long userId) {
-        UserDto userDto = userService.getUserById(userId);
 
-        return ("ok");
+
+    @GetMapping("/users")
+    public UserDto getUserById(@RequestParam long id) {
+        System.out.println("used find by ID");
+        return userService.getUserById(id);
     }
 
-    @GetMapping()
-    public String getAllUsers() {
-        return ("*** ALL USERS **** ");
-    }
+    /*@RequestMapping(value = "/users", method = RequestMethod.GET)
+    public List<UserDto> getAllUsers() {
+        List<UserDto> usersDtoAll = new ArrayList<>();
+        usersDtoAll = userService.getAllUsers();
+        System.out.println("use get all");
+        return (usersDtoAll);
+    }*/
 
-    @PostMapping
+    @PostMapping(path = "/users")
     public String createUser(@RequestBody UserDto userDto) {
-        UserDto newUser = userService.createUserDto(userDto);
+        UserDto newUser = userService.createUser(userDto);
         return (newUser.getEmail() + newUser.getId());
     }
 
-    @PutMapping
-    public String updateUserById(@RequestParam Long userId, @RequestBody UserDto userDtoUpdated) {
-        UserDto updateUser = userService.updateUserById(userId, userDtoUpdated);
+    @PutMapping(path = "/users")
+    public String updateUserById(@RequestBody UserDto userDtoUpdated) {
+        UserDto updateUser = userService.updateUser(userDtoUpdated);
         return ("ok");
     }
 
-    @DeleteMapping
-    public void deleteUserById(Long userId) {
-        userService.deleteUser(userId);
+    @DeleteMapping(path = "/users")
+    public void deleteUserById(UserDto userDtoToDelete) {
+        userService.deleteUser(userDtoToDelete);
     }
 
 

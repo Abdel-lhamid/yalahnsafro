@@ -2,20 +2,41 @@ package com.yallahnsafro.yallahnsafrobackend.services.implimentation;
 import com.yallahnsafro.yallahnsafrobackend.entities.UserEntity;
 import com.yallahnsafro.yallahnsafrobackend.repositories.UserRepository;
 import com.yallahnsafro.yallahnsafrobackend.services.UserService;
+import com.yallahnsafro.yallahnsafrobackend.shared.Utils;
 import com.yallahnsafro.yallahnsafrobackend.shared.dto.UserDto;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 
+
 @Service
-public class UserServiceImp implements UserService {
+public class UserServiceImp implements UserService, UserDetailsService {
+
+
+    @Override
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        UserEntity userEntity = userRepository.findByEmail(email);
+        if (userEntity == null) throw new UsernameNotFoundException(email);
+        return new User(userEntity.getEmail(), userEntity.getPassword(),new ArrayList<>());
+    }
 
     @Autowired
     UserRepository userRepository;
+
+    @Autowired
+    Utils util;
+
+
+    BCryptPasswordEncoder bCryptPasswordEncoder;
+
 
     @Override
     public UserDto createUser(UserDto userDto) {
@@ -25,12 +46,17 @@ public class UserServiceImp implements UserService {
             throw new RuntimeException("email already exists");
         }
 
-        //Encrypte password
+        //Generate userID
+        userDto.setUserId(util.generateUserId(32));
+
+        //Encrypt password
+        String encryptedPassword = bCryptPasswordEncoder.encode(userDto.getPassword());
+        userDto.setPassword(encryptedPassword);
+        //end of encryption
 
 
         UserEntity userEntity = new UserEntity();
         BeanUtils.copyProperties(userDto,userEntity);
-
         UserEntity newUserEntity = userRepository.save(userEntity);
         UserDto newUserDto = new UserDto();
         BeanUtils.copyProperties(newUserEntity, newUserDto);
@@ -68,10 +94,12 @@ public class UserServiceImp implements UserService {
     }
 
     @Override
-    public void deleteUser(UserDto userDtoToDelete) {
-        UserEntity userEntityToDelete = new UserEntity();
-        BeanUtils.copyProperties(userEntityToDelete, userDtoToDelete);
-        userRepository.delete(userEntityToDelete);
+    public void deleteUser(String userId) {
+        UserEntity userFound = userRepository.findByUserId(userId);
+
+        if (userFound!= null){
+            userRepository.delete(userFound);
+        } else throw new UsernameNotFoundException(userId);
     }
 
     @Override
@@ -86,6 +114,24 @@ public class UserServiceImp implements UserService {
         }
         return (allUsersDto);
     }
+
+    @Override
+    public UserDto getUserByUserId(String UserId) {
+        return null;
+    }
+
+    public UserDto getUserForLogin(String email) {
+        UserEntity userEntity = userRepository.findByEmail(email);
+
+        if(userEntity == null)
+            throw new UsernameNotFoundException(email);
+
+        UserDto userDto = new UserDto();
+        BeanUtils.copyProperties(userEntity,userDto);
+
+        return userDto;
+    }
+
 
 
 }

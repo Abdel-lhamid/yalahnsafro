@@ -5,12 +5,22 @@ import java.io.Serializable;
 public class UserDto implements Serializable {
     private static final long serialVersionUID = 6407688734661559517L;
     private long id;
+
+    private String userId;
     private String firstname;
     private String lastname;
     private String password;
     private String email;
     private String phonenumber;
     private String userType;
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
 
     public String getUserType() {
         return userType;

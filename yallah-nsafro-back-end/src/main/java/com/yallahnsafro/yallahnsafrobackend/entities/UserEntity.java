@@ -2,6 +2,8 @@ package com.yallahnsafro.yallahnsafrobackend.entities;
 
 
 
+
+
 import javax.persistence.*;
 import java.io.Serializable;
 
@@ -13,6 +15,10 @@ public class UserEntity implements Serializable {
     @Id
     @GeneratedValue
     private long id;
+
+    @GeneratedValue (strategy = GenerationType.SEQUENCE, generator = "user_seq")
+    @Column(nullable = true)
+    private String userId;
     @Column(nullable = false, length = 50)
     private String firstname;
     @Column(nullable = false, length = 50)
@@ -27,12 +33,7 @@ public class UserEntity implements Serializable {
     @Column(nullable = false, length = 10)
     private String userType;
 
-    public String getUserType() {
-        return userType;
-    }
-
-    public void setUserType(String userType) {
-        this.userType = userType;
+    public UserEntity() {
     }
 
     public long getId() {
@@ -81,5 +82,20 @@ public class UserEntity implements Serializable {
 
     public void setPhonenumber(String phonenumber) {
         this.phonenumber = phonenumber;
+    }
+
+    public String getUserType() {
+        return userType;
+    }
+
+    public void setUserType(String userType) {
+        this.userType = userType;
+    }
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 }

@@ -21,6 +21,9 @@ public class TripEntity implements Serializable {
     @Column(nullable = false)
     private String thumbNailImage;
 
+    @Column
+    private String organizer_Id;
+
     public long getId() {
         return id;
     }
@@ -69,4 +72,11 @@ public class TripEntity implements Serializable {
         this.thumbNailImage = thumbNailImage;
     }
 
+    public String getOrganizer_Id() {
+        return organizer_Id;
+    }
+
+    public void setOrganizer_Id(String organizer_Id) {
+        this.organizer_Id = organizer_Id;
+    }
 }

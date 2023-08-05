@@ -1,9 +1,11 @@
 package com.yallahnsafro.yallahnsafrobackend.services;
 
 import com.yallahnsafro.yallahnsafrobackend.shared.dto.UserDto;
+import org.springframework.security.core.userdetails.UserDetailsService;
+
 import java.util.List;
 
-public interface UserService {
+public interface UserService extends UserDetailsService {
 
 
     UserDto createUser(UserDto userDto);
@@ -11,8 +13,12 @@ public interface UserService {
     UserDto getUserById(long userId);
 
     UserDto updateUser(UserDto userDto);
-    void deleteUser(UserDto userDtoToDelete);
+    void deleteUser(String userId);
     List<UserDto> getAllUsers();
+
+    UserDto getUserByUserId(String UserId);
+
+    UserDto getUserForLogin(String email);
 
 
 }

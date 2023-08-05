@@ -3,6 +3,8 @@ package com.yallahnsafro.yallahnsafrobackend.controllers;
 import com.yallahnsafro.yallahnsafrobackend.services.UserService;
 import com.yallahnsafro.yallahnsafrobackend.shared.dto.UserDto;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -15,19 +17,19 @@ public class UserContoller {
 
 
 
-    @GetMapping("/users")
-    public UserDto getUserById(@RequestParam long id) {
+    @GetMapping("/users/{userId}")
+    public UserDto getUserById(@PathVariable long userId) {
         System.out.println("used find by ID");
-        return userService.getUserById(id);
+        return userService.getUserById(userId);
     }
 
-    /*@RequestMapping(value = "/users", method = RequestMethod.GET)
+    @GetMapping("/users")
     public List<UserDto> getAllUsers() {
         List<UserDto> usersDtoAll = new ArrayList<>();
         usersDtoAll = userService.getAllUsers();
         System.out.println("use get all");
         return (usersDtoAll);
-    }*/
+    }
 
     @PostMapping(path = "/users")
     public String createUser(@RequestBody UserDto userDto) {
@@ -41,9 +43,10 @@ public class UserContoller {
         return ("ok");
     }
 
-    @DeleteMapping(path = "/users")
-    public void deleteUserById(UserDto userDtoToDelete) {
-        userService.deleteUser(userDtoToDelete);
+    @DeleteMapping(path = "/users/{userId}")
+    public ResponseEntity<Object> deleteUserById(@PathVariable String userId) {
+        userService.deleteUser(userId);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
 

@@ -1,6 +1,5 @@
 package com.yallahnsafro.yallahnsafrobackend;
 
-import com.yallahnsafro.yallahnsafrobackend.services.implimentation.UserServiceImp;
 import com.yallahnsafro.yallahnsafrobackend.shared.SpringApplicationContext;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

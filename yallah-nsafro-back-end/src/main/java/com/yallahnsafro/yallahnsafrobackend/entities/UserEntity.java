@@ -1,15 +1,28 @@
 package com.yallahnsafro.yallahnsafrobackend.entities;
 
 
-
-
+import com.yallahnsafro.yallahnsafrobackend.shared.UserRole;
+import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.time.LocalDateTime;
+import java.util.Collection;
+import java.util.Collections;
 
 @Entity
 @Table(name = "users", schema = "yallahnsafro_db")
-public class UserEntity implements Serializable {
+@Getter
+@Setter
+@NoArgsConstructor
+public class UserEntity implements Serializable, UserDetails {
 
     private static final long serialVersionUID = 6407688734661559517L;
     @Id
@@ -17,85 +30,79 @@ public class UserEntity implements Serializable {
     private long id;
 
     @GeneratedValue (strategy = GenerationType.SEQUENCE, generator = "user_seq")
-    @Column(nullable = true)
+    @Column(nullable = true, unique = true)
     private String userId;
+
     @Column(nullable = false, length = 50)
     private String firstname;
+
     @Column(nullable = false, length = 50)
     private String lastname;
+
     @Column(nullable = false)
     private String password;
-    @Column(nullable = false)
+
+    @Column(nullable = false, unique = true)
     private String email;
+
     @Column(nullable = true, length = 10)
     private String phonenumber;
 
-    @Column(nullable = false, length = 10)
-    private String userType;
+    @CreationTimestamp
+    private LocalDateTime created_at;
 
-    public UserEntity() {
+    @UpdateTimestamp
+    private LocalDateTime updated_at;
+
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private UserRole role;
+
+    @Column(nullable = false)
+    private boolean locked = false;
+
+    @Column(nullable = false)
+    private boolean enabled = true;
+
+
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        SimpleGrantedAuthority authority = new SimpleGrantedAuthority(role.name());
+        return Collections.singletonList(authority);
     }
 
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public String getFirstname() {
-        return firstname;
-    }
-
-    public void setFirstname(String firstname) {
-        this.firstname = firstname;
-    }
-
-    public String getLastname() {
-        return lastname;
-    }
-
-    public void setLastname(String lastname) {
-        this.lastname = lastname;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getEmail() {
+    @Override
+    public String getUsername() {
         return email;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
     }
 
-    public String getPhonenumber() {
-        return phonenumber;
+    @Override
+    public boolean isAccountNonLocked() {
+        return !locked;
     }
 
-    public void setPhonenumber(String phonenumber) {
-        this.phonenumber = phonenumber;
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
     }
 
-    public String getUserType() {
-        return userType;
+    @Override
+    public boolean isEnabled() {
+        return enabled;
     }
 
-    public void setUserType(String userType) {
-        this.userType = userType;
-    }
-    public String getUserId() {
-        return userId;
-    }
 
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
+    /**
+     * @OneToMany (cascade = CascadeType.ALL)
+     * @JoinColumn (name = "user_id", referencedColumnName = "user_id")
+     * private List<BookingEntity> bookings;
+     *
+     */
+
 }

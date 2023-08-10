@@ -4,6 +4,7 @@ import com.yallahnsafro.yallahnsafrobackend.repositories.UserRepository;
 import com.yallahnsafro.yallahnsafrobackend.services.UserService;
 import com.yallahnsafro.yallahnsafrobackend.shared.Utils;
 import com.yallahnsafro.yallahnsafrobackend.shared.dto.UserDto;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.User;
@@ -13,12 +14,15 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 
 @Service
-public class UserServiceImp implements UserService, UserDetailsService {
+@RequiredArgsConstructor
+public class UserServiceImpl implements UserService, UserDetailsService {
 
 
     @Override
@@ -35,29 +39,39 @@ public class UserServiceImp implements UserService, UserDetailsService {
     Utils util;
 
 
+    @Autowired
     BCryptPasswordEncoder bCryptPasswordEncoder;
 
 
+
     @Override
-    public UserDto createUser(UserDto userDto) {
+    public UserDto registerUser(UserDto userDto) {
         //check if user data exists by email
         UserEntity checkUser = userRepository.findByEmail(userDto.getEmail());
         if (checkUser != null){
             throw new RuntimeException("email already exists");
         }
-
-        //Generate userID
+        //Generate userID, we have created a class utils and defined a method generate
         userDto.setUserId(util.generateUserId(32));
-
+        //enabled
+        userDto.setEnabled(true);
+        userDto.setLocked(false);
         //Encrypt password
         String encryptedPassword = bCryptPasswordEncoder.encode(userDto.getPassword());
         userDto.setPassword(encryptedPassword);
         //end of encryption
-
-
         UserEntity userEntity = new UserEntity();
         BeanUtils.copyProperties(userDto,userEntity);
         UserEntity newUserEntity = userRepository.save(userEntity);
+        //Confirmation Token
+        String token = UUID.randomUUID().toString();
+
+        // send confirmation token
+
+
+
+        // TODO: send email
+
         UserDto newUserDto = new UserDto();
         BeanUtils.copyProperties(newUserEntity, newUserDto);
         return (newUserDto);
@@ -116,8 +130,12 @@ public class UserServiceImp implements UserService, UserDetailsService {
     }
 
     @Override
-    public UserDto getUserByUserId(String UserId) {
-        return null;
+    public UserDto getUserByUserId(String userId) {
+        UserEntity userEntity = userRepository.findByUserId(userId);
+        UserDto userDto = new UserDto();
+        BeanUtils.copyProperties(userEntity,userDto);
+
+        return userDto;
     }
 
     public UserDto getUserForLogin(String email) {

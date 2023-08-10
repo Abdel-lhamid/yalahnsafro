@@ -1,14 +1,12 @@
 package com.yallahnsafro.yallahnsafrobackend.services.implimentation;
 
-import com.yallahnsafro.yallahnsafrobackend.repositories.TripRepository;
 import com.yallahnsafro.yallahnsafrobackend.services.TripService;
 import com.yallahnsafro.yallahnsafrobackend.shared.dto.TripDto;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 @Service
-public class TripServiceImp implements TripService {
+public class TripServiceImpl implements TripService {
 
     @Override
     public TripDto createTrip(TripDto tripDto) {

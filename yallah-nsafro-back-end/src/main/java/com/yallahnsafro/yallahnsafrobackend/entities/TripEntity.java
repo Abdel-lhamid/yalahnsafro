@@ -1,9 +1,14 @@
 package com.yallahnsafro.yallahnsafrobackend.entities;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import javax.persistence.*;
 import java.io.Serializable;
 @Entity
 @Table(name = "trips", schema = "yallahnsafro_db")
+@Getter
+@Setter
 public class TripEntity implements Serializable {
     private static final long serialVersionUID = 6407688734561559517L;
 
@@ -21,52 +26,15 @@ public class TripEntity implements Serializable {
     @Column(nullable = false)
     private String thumbNailImage;
 
-    public long getId() {
-        return id;
-    }
+    @Column
+    private String organizer_Id;
 
-    public void setId(long id) {
-        this.id = id;
-    }
+    /**
+     * @OneToMany (cascade = CascadeType.ALL)
+     * @JoinColumn (name = "trip_id", referencedColumnName = "id")
+     * private List<BookingEntity> bookings;
+     *
+     */
 
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getDeparture() {
-        return departure;
-    }
-
-    public void setDeparture(String departure) {
-        this.departure = departure;
-    }
-
-    public String getDestination() {
-        return destination;
-    }
-
-    public void setDestination(String destination) {
-        this.destination = destination;
-    }
-
-    public String getThumbNailImage() {
-        return thumbNailImage;
-    }
-
-    public void setThumbNailImage(String thumbNailImage) {
-        this.thumbNailImage = thumbNailImage;
-    }
 
 }

@@ -1,70 +1,45 @@
 package com.yallahnsafro.yallahnsafrobackend.shared.dto;
 
-import java.io.Serializable;
+import com.fasterxml.jackson.annotation.JsonView;
+import com.yallahnsafro.yallahnsafrobackend.shared.UserRole;
+import com.yallahnsafro.yallahnsafrobackend.utils.UserResponse;
+import lombok.Getter;
+import lombok.Setter;
 
+import java.io.Serializable;
+import java.time.LocalDateTime;
+import java.util.Date;
+
+@Getter @Setter
 public class UserDto implements Serializable {
     private static final long serialVersionUID = 6407688734661559517L;
     private long id;
+
+    @JsonView(value = {UserResponse.class})
+    private String userId;
+    @JsonView(value = {UserResponse.class})
     private String firstname;
+    @JsonView(value = {UserResponse.class})
     private String lastname;
     private String password;
+    @JsonView(value = {UserResponse.class})
     private String email;
+    @JsonView(value = {UserResponse.class})
     private String phonenumber;
-    private String userType;
+    @JsonView(value = {UserResponse.class})
+    private UserRole role;
 
-    public String getUserType() {
-        return userType;
-    }
+    private Date created_at;
 
-    public void setUserType(String userType) {
-        this.userType = userType;
-    }
+    private Date update_at;
 
-    public long getId() {
-        return id;
-    }
 
-    public void setId(long id) {
-        this.id = id;
-    }
+    @JsonView(value = {UserResponse.class})
+    private boolean locked;
 
-    public String getFirstname() {
-        return firstname;
-    }
+    @JsonView(value = {UserResponse.class})
+    private boolean enabled;
 
-    public void setFirstname(String firstname) {
-        this.firstname = firstname;
-    }
 
-    public String getLastname() {
-        return lastname;
-    }
 
-    public void setLastname(String lastname) {
-        this.lastname = lastname;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getPhonenumber() {
-        return phonenumber;
-    }
-
-    public void setPhonenumber(String phonenumber) {
-        this.phonenumber = phonenumber;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
 }

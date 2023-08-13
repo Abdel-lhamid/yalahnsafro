@@ -87,9 +87,9 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
         //generate Confirmation Token
         String verificationToken = Jwts.builder()
+                .setSubject(userEntity.getEmail())
                 .setExpiration(DateUtils.addMinutes(new Date(), verify_email_expiring_min))
                 .signWith(SignatureAlgorithm.HS512, SecurityConstants.TOKEN_SECRET)
-                .claim("email", userEntity.getEmail())
                 .compact();
         //save confirmation token
         userEntity.setVerification_token(verificationToken);
@@ -201,7 +201,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         userToVerify.setEmail_verification_status(true);
         userToVerify.setVerification_token(null);
         userRepository.save(userToVerify);
-        return false;
+        return true;
     }
 
 

@@ -38,6 +38,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests().antMatchers("/users/forgetPassword").permitAll();
         http.authorizeRequests().antMatchers("/users/resetPassword").permitAll();
         http.authorizeRequests().antMatchers("/users/registration").permitAll();
+        http.authorizeRequests().antMatchers("/users/verifyEmail").permitAll();
         http.authorizeRequests().antMatchers("/users/{userId}").hasAnyAuthority(SecurityConstants.USER_ROLE_ADMIN);
         http.authorizeRequests().antMatchers("/users/allUsers").hasAnyAuthority(SecurityConstants.USER_ROLE_ADMIN);
         http.authorizeRequests().antMatchers("/users/").hasAnyAuthority(SecurityConstants.USER_ROLE_ADMIN);

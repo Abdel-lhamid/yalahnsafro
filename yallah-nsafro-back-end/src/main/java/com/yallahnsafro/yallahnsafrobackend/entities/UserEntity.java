@@ -64,6 +64,10 @@ public class UserEntity implements Serializable, UserDetails {
     @Column(nullable = false)
     private boolean enabled = true;
 
+    private String verification_token;
+
+    private boolean email_verification_status = false;
+
 
 
     @Override

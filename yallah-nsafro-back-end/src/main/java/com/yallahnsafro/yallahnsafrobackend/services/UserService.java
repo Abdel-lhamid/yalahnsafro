@@ -5,6 +5,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
+import javax.mail.MessagingException;
 import java.util.List;
 
 public interface UserService extends UserDetailsService {
@@ -25,6 +26,7 @@ public interface UserService extends UserDetailsService {
 
     UserDto getUserForLogin(String email);
 
+    int forgotPasswordChecker(String email, String verificationToken);
 
 
 }

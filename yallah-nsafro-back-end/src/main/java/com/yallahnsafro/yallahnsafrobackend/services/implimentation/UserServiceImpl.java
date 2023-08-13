@@ -1,12 +1,19 @@
 package com.yallahnsafro.yallahnsafrobackend.services.implimentation;
+import com.yallahnsafro.yallahnsafrobackend.controllers.UserController;
 import com.yallahnsafro.yallahnsafrobackend.entities.UserEntity;
 import com.yallahnsafro.yallahnsafrobackend.repositories.UserRepository;
+import com.yallahnsafro.yallahnsafrobackend.security.SecurityConstants;
+import com.yallahnsafro.yallahnsafrobackend.services.EmailSenderService;
 import com.yallahnsafro.yallahnsafrobackend.services.UserService;
 import com.yallahnsafro.yallahnsafrobackend.shared.Utils;
 import com.yallahnsafro.yallahnsafrobackend.shared.dto.UserDto;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang.time.DateUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -14,10 +21,14 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.mail.MessagingException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 @Service
@@ -31,16 +42,24 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         if (userEntity == null) throw new UsernameNotFoundException(email);
         return new User(userEntity.getEmail(), userEntity.getPassword(),new ArrayList<>());
     }
-
+    @Value("${url}")
+    private String url;
+    @Value("${login.token.expiry_minutes}")
+    private int restPassword_expiring_min;
+    @Value("${app.email}")
+    private String appEmail;
     @Autowired
     UserRepository userRepository;
 
     @Autowired
     Utils util;
 
-
     @Autowired
     BCryptPasswordEncoder bCryptPasswordEncoder;
+
+    private final EmailSenderService emailSender;
+
+
 
 
 
@@ -62,15 +81,103 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         //end of encryption
         UserEntity userEntity = new UserEntity();
         BeanUtils.copyProperties(userDto,userEntity);
+
+        //generate Confirmation Token
+        String verificationToken = Jwts.builder()
+                .setExpiration(DateUtils.addMinutes(new Date(), restPassword_expiring_min))
+                .signWith(SignatureAlgorithm.HS512, SecurityConstants.TOKEN_SECRET)
+                .claim("email", userEntity.getEmail())
+                .compact();
+        //save confirmation token
+        userEntity.setVerification_token(verificationToken);
+        userEntity.setEmail_verification_status(false);
+
         UserEntity newUserEntity = userRepository.save(userEntity);
-        //Confirmation Token
-        String token = UUID.randomUUID().toString();
 
-        // send confirmation token
+        // TODO: send
+        String verificationLink = url + "newPassword?verificationToken=" + verificationToken;
 
+        String emailVerificationHtmlMsg = "<!-- In Container -->\n"
+                + "<table class=\"in_container\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\" align=\"center\" style=\"border-collapse:collapse; mso-table-lspace:0pt; mso-table-rspace:0pt;\">\n"
+                + "  <tr>\n"
+                + "    <td>\n"
+                + "      <!-- About  -->\n"
+                + "      <table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\" align=\"center\" bgcolor=\"ffffff\" style=\"border-collapse:collapse; mso-table-lspace:0pt; mso-table-rspace:0pt; background-color:#ffffff;\">\n"
+                + "        <tr><td height=\"65px\" width=\"100%\" style=\"height:65px;\"></td></tr>\n"
+                + "        <tr>\n"
+                + "          <td align=\"center\">\n"
+                + "            <table class=\"full_width_600\" width=\"600\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" align=\"center\" style=\"border-collapse:collapse; mso-table-lspace:0pt; mso-table-rspace:0pt; border:0;text-align:center;\">\n"
+                + "              <tr>\n"
+                + "                <td>\n"
+                + "                  <table width=\"100%\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" style=\"border-collapse:collapse; mso-table-lspace:0pt; mso-table-rspace:0pt; border:0;\">\n"
+                + "                    <tr>\n"
+                + "                      <td align=\"left\" style=\" text-align:left; color: #676f84; font-family: 'Open Sans', Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 600; line-height:30px;\"> <span style=\"color:black;\">Hello</span> " + newUserEntity.getFirstname() + " " + newUserEntity.getLastname() + ",</td>\n"
+                + "                    </tr>\n"
+                + "                  </table>\n"
+                + "                </td>\n"
+                + "              </tr>\n"
+                + "              <tr><td height=\"15px\" width=\"100%\" style=\"height:15px;\"></td></tr>\n"
+                + "              <tr>\n"
+                + "                <td>\n"
+                + "                  <table width=\"100%\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" style=\"max-width: 600px; margin:0 auto;border-collapse:collapse; mso-table-lspace:0pt; mso-table-rspace:0pt; border:0;\">\n"
+                + "                    <tr>\n"
+                + "                      <td style=\"text-align:left; color: black; font-family: 'Open Sans', Helvetica, Arial, sans-serif; font-size: 14px; font-weight: 600; line-height: 20px;\">\n"
+                + "Your email address has been successfully registered. Please click the following link to verify your email:\n"
+                + "<br>\n"
+                + "<div style=\"text-align:center; background-color: #00bcd4; color: white;padding: 15px 25px; text-align: center; text-decoration: none; display: inline-block;\">\n"
+                + "  <a style=\"color:white;\" href=" + verificationLink + ">Verify Email</a>\n"
+                + "</div>\n"
+                + "<br>\n"
+                + "Thank you for using our service!\n"
+                + "                      </td>\n"
+                + "                    </tr>\n"
+                + "                  </table>\n"
+                + "                </td>\n"
+                + "              </tr>\n"
+                + "            </table>\n"
+                + "          </td>\n"
+                + "        </tr>\n"
+                + "        <tr><td height=\"65px\" width=\"100%\" style=\"height:65px;\"></td></tr>\n"
+                + "      </table>\n"
+                + "      <!-- End About  -->\n"
+                + "\n"
+                + "      <!-- Bottom -->\n"
+                + "      <table border=\"0\" cellpadding=\"0\" cellspacing=\"0\"  width=\"100%\" align=\"center\" background=\"http://ryanhallmedia.com/thirdspace/img/email/lastback.jpg\" bgcolor=\"3d424e\" style=\"background-image:url('img/lastback.jpg'); background-size: cover; -webkit-background-size: cover; -moz-background-size: cover -o-background-size: cover; background-position: bottom center; background-repeat: no-repeat; background-color: #00bcd4; border-radius: 0px 0px 2px 2px;\">\n"
+                + "        <tr>\n"
+                + "          <td>\n"
+                + "            <!--  Caption  -->\n"
+                + "            <table border=\"0\" cellpadding=\"0\" cellspacing=\"0\">\n"
+                + "              <tr>\n"
+                + "                <td>\n"
+                + "                  <table width=\"100%\" border=\"0\" cellpadding=\"20\" cellspacing=\"0\" style=\"border-collapse:collapse; mso-table-lspace:0pt; mso-table-rspace:0pt; border:0;\">\n"
+                + "                    <tr>\n"
+                + "                      <td>\n"
+                + "                        <table width=\"100%\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" align=\"center\" style=\"border-collapse:collapse; mso-table-lspace:0pt; mso-table-rspace:0pt; border:0;\">\n"
+                + "                          <tr>\n"
+                + "                            <td align=\"left\" style=\" text-align:left; color: #fff; font-family: 'Open Sans', Helvetica, Arial, sans-serif; font-size: 14px; font-weight: 700;line-height:24px;letter-spacing:0.5px;\"> Best regards,</td>\n"
+                + "                          </tr>\n"
+                + "                        </table>\n"
+                + "                      </td>\n"
+                + "                    </tr>\n"
+                + "                  </table>\n"
+                + "                </td>\n"
+                + "              </tr>\n"
+                + "\n"
+                + "            </table>\n"
+                + "          </td>\n"
+                + "        </tr>\n"
+                + "      </table>\n"
+                + "      <!-- Bottom -->\n"
+                + "    </td>\n"
+                + "  </tr>\n"
+                + "</table>\n"
+                + "<!-- End In Container -->";
 
-
-        // TODO: send email
+        try {
+            emailSender.send(newUserEntity.getEmail(),"Verification email YallahNssafro.ma",appEmail,emailVerificationHtmlMsg);
+        } catch (Exception ex) {
+            Logger.getLogger(UserController.class.getName()).log(Level.SEVERE, null, ex);
+        }
 
         UserDto newUserDto = new UserDto();
         BeanUtils.copyProperties(newUserEntity, newUserDto);
@@ -150,6 +257,18 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         return userDto;
     }
 
+    @Override
+    public int forgotPasswordChecker(String email, String verificationToken) {
+        //check if user with email provided exists in db
+        UserEntity userExists = userRepository.findByEmail(email);
+        if (userExists == null)
+        {
+            return 0;
+        }
+        userExists.setVerification_token(verificationToken);
+        userRepository.save(userExists);
+        return 1;
+    }
 
 
 }

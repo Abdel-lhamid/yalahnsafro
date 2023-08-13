@@ -407,5 +407,29 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         return false;
     }
 
+    @Override
+    public boolean disableUser(String email) {
+        UserEntity user = userRepository.findByEmail(email);
+        if (user != null){
+            user.setEnabled(false);
+            user.setLocked(true);
+            userRepository.save(user);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean enableUser(String email) {
+        UserEntity user = userRepository.findByEmail(email);
+        if (user != null){
+            user.setEnabled(true);
+            user.setLocked(false);
+            userRepository.save(user);
+            return true;
+        }
+        return false;
+    }
+
 
 }

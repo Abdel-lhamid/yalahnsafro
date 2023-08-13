@@ -111,5 +111,25 @@ public class UserController {
         return false;
     }
 
+    @PreAuthorize("hasAuthority('" + SecurityConstants.USER_ROLE_ADMIN + "')")
+    @PostMapping("/disableUser")
+    public boolean disableUser(@RequestBody Map<String, String> requestBody){
+        String email = requestBody.get("email");
+        if (userService.disableUser(email))
+            return true;
+
+        return false;
+    }
+
+    @PreAuthorize("hasAuthority('" + SecurityConstants.USER_ROLE_ADMIN + "')")
+    @PostMapping("/enableUser")
+    public boolean enableUser(@RequestBody Map<String, String> requestBody){
+        String email = requestBody.get("email");
+        if (userService.enableUser(email))
+            return true;
+
+        return false;
+    }
+
 
 }

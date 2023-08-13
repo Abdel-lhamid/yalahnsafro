@@ -32,4 +32,8 @@ public interface UserService extends UserDetailsService {
 
     boolean resetPassword(String newPassword, String verificationToken);
 
+    boolean disableUser(String email);
+    boolean enableUser(String email);
+
+
 }

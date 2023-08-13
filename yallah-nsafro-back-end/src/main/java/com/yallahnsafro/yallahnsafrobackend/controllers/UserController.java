@@ -19,10 +19,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.StringJoiner;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -96,24 +93,22 @@ public class UserController {
     }
 
     @PostMapping("/forgotPassword")
-    public boolean forgotPassword(@RequestParam String email, HttpServletResponse response) throws MessagingException{
-        try {
-            UserDto user = userService.getUserForLogin(email);
-            if (user != null){
-                String jwtToken = Jwts.builder()
-                        .setExpiration(DateUtils.addMinutes(new Date(), restPassword_expiring_min))
-                        .signWith(SignatureAlgorithm.HS512, SecurityConstants.TOKEN_SECRET)
-                        .claim("email", email)
-                        .compact();
+    public boolean forgotPassword(@RequestBody Map<String, String> requestBody) {
+        String email = requestBody.get("email");
+        if (userService.forgotPassword(email))
                 return true;
-            } else {
-            throw new UserException(ErrorMessages.INTERNAL_SERVER_ERROR.getErrorMessage());
-        }
-        }catch (Exception ex) {
-            Logger.getLogger(UserController.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        throw new UserException(ErrorMessages.RECORD_ALREADY_EXISTS.getErrorMessage());
 
+        return false;
+    }
+
+    @PostMapping("/resetPassword")
+    public boolean resetPassword(@RequestBody Map<String, String> requestBody){
+
+        String newPassword = requestBody.get("newPassword");
+        String verificationToken = requestBody.get("verificationToken");
+        if (userService.resetPassword(newPassword, verificationToken))
+            return true;
+        return false;
     }
 
 

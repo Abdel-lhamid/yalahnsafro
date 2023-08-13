@@ -44,9 +44,8 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
         } catch (IOException e) {
             throw new RuntimeException(e);
-
         }
-        // we can request info in the body as a jason request anass method https://youtu.be/VVn9OG9nfH0?t=4083 will do later
+        //  we used it //we can request info in the body as a jason request anass method https://youtu.be/VVn9OG9nfH0?t=4083 will do later
         //String email = request.getParameter("email");
         //String password = request.getParameter("password");
        // UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(email,password,new ArrayList<>());

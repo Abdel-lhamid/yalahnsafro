@@ -28,7 +28,8 @@ public interface UserService extends UserDetailsService {
 
     boolean verifyEmail(String verificationToken);
 
-    int forgotPasswordChecker(String email, String verificationToken);
+    boolean forgotPassword(String email);
 
+    boolean resetPassword(String newPassword, String verificationToken);
 
 }

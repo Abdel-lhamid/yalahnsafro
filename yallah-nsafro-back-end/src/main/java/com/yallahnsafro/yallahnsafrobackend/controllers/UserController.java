@@ -88,6 +88,13 @@ public class UserController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @GetMapping("verifyEmail")
+    public boolean verifyEmail(@RequestParam String verificationToken){
+        if (userService.verifyEmail(verificationToken))
+            return true;
+        return false;
+    }
+
     @PostMapping("/forgotPassword")
     public boolean forgotPassword(@RequestParam String email, HttpServletResponse response) throws MessagingException{
         try {

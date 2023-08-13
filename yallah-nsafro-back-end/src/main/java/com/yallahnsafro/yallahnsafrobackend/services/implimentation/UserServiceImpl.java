@@ -7,6 +7,7 @@ import com.yallahnsafro.yallahnsafrobackend.services.EmailSenderService;
 import com.yallahnsafro.yallahnsafrobackend.services.UserService;
 import com.yallahnsafro.yallahnsafrobackend.shared.Utils;
 import com.yallahnsafro.yallahnsafrobackend.shared.dto.UserDto;
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.RequiredArgsConstructor;
@@ -46,6 +47,8 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     private String url;
     @Value("${login.token.expiry_minutes}")
     private int restPassword_expiring_min;
+    @Value("${verify.email.token.expiry_minutes}")
+    private int verify_email_expiring_min;
     @Value("${app.email}")
     private String appEmail;
     @Autowired
@@ -84,7 +87,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
         //generate Confirmation Token
         String verificationToken = Jwts.builder()
-                .setExpiration(DateUtils.addMinutes(new Date(), restPassword_expiring_min))
+                .setExpiration(DateUtils.addMinutes(new Date(), verify_email_expiring_min))
                 .signWith(SignatureAlgorithm.HS512, SecurityConstants.TOKEN_SECRET)
                 .claim("email", userEntity.getEmail())
                 .compact();
@@ -95,7 +98,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         UserEntity newUserEntity = userRepository.save(userEntity);
 
         // TODO: send
-        String verificationLink = url + "newPassword?verificationToken=" + verificationToken;
+        String verificationLink = url + "verifyEmail?verificationToken=" + verificationToken;
 
         String emailVerificationHtmlMsg = "<!-- In Container -->\n"
                 + "<table class=\"in_container\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\" align=\"center\" style=\"border-collapse:collapse; mso-table-lspace:0pt; mso-table-rspace:0pt;\">\n"
@@ -184,6 +187,25 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         return (newUserDto);
     }
 
+
+
+    @Override
+    public boolean verifyEmail(String verificationToken) {
+        Claims claims = Jwts.parser()
+                .setSigningKey(SecurityConstants.TOKEN_SECRET)
+                .parseClaimsJws(verificationToken)
+                .getBody();
+
+        String email = claims.getSubject();
+        UserEntity userToVerify = userRepository.findByEmail(email);
+        userToVerify.setEmail_verification_status(true);
+        userToVerify.setVerification_token(null);
+        userRepository.save(userToVerify);
+        return false;
+    }
+
+
+
     @Override
     public UserDto getUserById(long userId) throws UsernameNotFoundException {
             UserEntity foundUserEntity = new UserEntity();
@@ -256,6 +278,8 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
         return userDto;
     }
+
+
 
     @Override
     public int forgotPasswordChecker(String email, String verificationToken) {

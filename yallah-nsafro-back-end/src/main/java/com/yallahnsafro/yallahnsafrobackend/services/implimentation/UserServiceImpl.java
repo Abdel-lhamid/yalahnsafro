@@ -206,6 +206,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
 
 
+
     @Override
     public UserDto getUserById(long userId) throws UsernameNotFoundException {
             UserEntity foundUserEntity = new UserEntity();
@@ -282,16 +283,152 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
 
     @Override
-    public int forgotPasswordChecker(String email, String verificationToken) {
-        //check if user with email provided exists in db
+    public boolean forgotPassword(String email) {
         UserEntity userExists = userRepository.findByEmail(email);
-        if (userExists == null)
-        {
-            return 0;
+        if (userExists != null){
+            String verificationToken = Jwts.builder()
+                    .setSubject(email)
+                    .setExpiration(DateUtils.addMinutes(new Date(), restPassword_expiring_min))
+                    .signWith(SignatureAlgorithm.HS512, SecurityConstants.TOKEN_SECRET)
+                    .compact();
+
+            userExists.setVerification_token(verificationToken);
+            userRepository.save(userExists);
+
+            String passwordResetLink = url + "newPassword?verificationToken=" + verificationToken;
+
+            String htmlMsg = "      <!-- In Container -->\n"
+                    + "      <table class=\"in_container\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\" align=\"center\" style=\"border-collapse:collapse; mso-table-lspace:0pt; mso-table-rspace:0pt;\">\n"
+                    + "        <tr>\n"
+                    + "          <td>\n"
+                    + "            <!-- About  -->\n"
+                    + "            <table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\" align=\"center\" bgcolor=\"ffffff\" style=\"border-collapse:collapse; mso-table-lspace:0pt; mso-table-rspace:0pt; background-color:#ffffff;\">\n"
+                    + "              <tr><td height=\"65px\" width=\"100%\" style=\"height:65px;\"></td></tr>\n"
+                    + "              <tr>\n"
+                    + "                <td align=\"center\">\n"
+                    + "                  <table class=\"full_width_600\" width=\"600\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" align=\"center\" style=\"border-collapse:collapse; mso-table-lspace:0pt; mso-table-rspace:0pt; border:0;text-align:center;\">\n"
+                    + "                    <tr>\n"
+                    + "                      <td>\n"
+                    + "                        <table width=\"100%\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" style=\"border-collapse:collapse; mso-table-lspace:0pt; mso-table-rspace:0pt; border:0;\">\n"
+                    + "                          <tr>\n"
+                    + "                            <td align=\"left\" style=\" text-align:left; color: #676f84; font-family: 'Open Sans', Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 600; line-height:30px;\"> <span style=\"color:black;\">Bonjour</span> " + userExists.getFirstname() + " " + userExists.getLastname() + ",</td>\n"
+                    + "                          </tr>\n"
+                    + "                        </table>\n"
+                    + "                      </td>\n"
+                    + "                    </tr>\n"
+                    + "                    <tr><td height=\"15px\" width=\"100%\" style=\"height:15px;\"></td></tr>\n"
+                    + "                    <tr>\n"
+                    + "                      <td>\n"
+                    + "                        <table width=\"100%\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" style=\"max-width: 600px; margin:0 auto;border-collapse:collapse; mso-table-lspace:0pt; mso-table-rspace:0pt; border:0;\">\n"
+                    + "                          <tr>\n"
+                    + "                            <td style=\"text-align:left; color: black; font-family: 'Open Sans', Helvetica, Arial, sans-serif; font-size: 14px; font-weight: 600; line-height: 20px;\">\n"
+                    + "Une réinitialisation du mot de passe de votre compte a été demandée. Cliquez sur le lien ci-dessous pour modifier votre mot de passe.\n"
+                    + "															<br>\n"
+                    + " <div style=\"text-align:center; background-color: #00bcd4; color: white;padding: 15px 25px; text-align: center; text-decoration: none; display: inline-block;\" > <a style=\"color:white;\"  href=" + passwordResetLink + ">Changer votre mot de passe</a> </div> \n"
+                    + "															<br>\n"
+                    + "															<br>\n"
+                    + "Remarque : ce lien est valable pendant " + restPassword_expiring_min + "min. Après expiration de ce délai, vous devrez soumettre une nouvelle demande de réinitialisation de mot de passe.\n"
+                    + "                            </td>\n"
+                    + "                          </tr>\n"
+                    + "                        </table>\n"
+                    + "                      </td>\n"
+                    + "                    </tr>\n"
+                    + "                  </table>\n"
+                    + "                </td>\n"
+                    + "              </tr>\n"
+                    + "              <tr><td height=\"65px\" width=\"100%\" style=\"height:65px;\"></td></tr>\n"
+                    + "            </table>\n"
+                    + "            <!-- End About  -->\n"
+                    + "\n"
+                    + "            <!-- Bottom -->\n"
+                    + "            <table border=\"0\" cellpadding=\"0\" cellspacing=\"0\"  width=\"100%\" align=\"center\" background=\"http://ryanhallmedia.com/thirdspace/img/email/lastback.jpg\" bgcolor=\"3d424e\" style=\"background-image:url('img/lastback.jpg'); background-size: cover; -webkit-background-size: cover; -moz-background-size: cover -o-background-size: cover; background-position: bottom center; background-repeat: no-repeat; background-color: #00bcd4; border-radius: 0px 0px 2px 2px;\">\n"
+                    + "              <tr>\n"
+                    + "                <td>\n"
+                    + "                  <!--  Caption  -->\n"
+                    + "                  <table border=\"0\" cellpadding=\"0\" cellspacing=\"0\">\n"
+                    + "                    <tr>\n"
+                    + "                      <td>\n"
+                    + "                        <table width=\"100%\" border=\"0\" cellpadding=\"20\" cellspacing=\"0\" style=\"border-collapse:collapse; mso-table-lspace:0pt; mso-table-rspace:0pt; border:0;\">\n"
+                    + "                          <tr>\n"
+                    + "                            <td>\n"
+                    + "                              <table width=\"100%\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" align=\"center\" style=\"border-collapse:collapse; mso-table-lspace:0pt; mso-table-rspace:0pt; border:0;\">\n"
+                    + "                                <tr>\n"
+                    + "                                  <td align=\"left\" style=\" text-align:left; color: #fff; font-family: 'Open Sans', Helvetica, Arial, sans-serif; font-size: 14px; font-weight: 700;line-height:24px;letter-spacing:0.5px;\"> Cordialement,</td>\n"
+                    + "                                </tr>\n"
+                    + "                              </table>\n"
+                    + "                            </td>\n"
+                    + "                          </tr>\n"
+                    + "\n"
+                    + "                        </table>\n"
+                    + "                      </td>\n"
+                    + "                    </tr>\n"
+                    + "                  </table>\n"
+                    + "                  <!--  End Caption  -->\n"
+                    + "                </td>\n"
+                    + "              </tr>\n"
+                    + "            </table>\n"
+                    + "            <!-- Bottom -->\n"
+                    + "          </td>\n"
+                    + "        </tr>\n"
+                    + "      </table>\n"
+                    + "      <!-- End In Container -->";
+
+            try {
+                emailSender.send(userExists.getEmail(),"Password Reset email YallahNssafro.ma",appEmail,htmlMsg);
+                return true;
+            } catch (Exception ex) {
+                Logger.getLogger(UserController.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
         }
-        userExists.setVerification_token(verificationToken);
-        userRepository.save(userExists);
-        return 1;
+
+        return false;
+    }
+
+    @Override
+    public boolean resetPassword(String newPassword, String verificationToken) {
+        Claims claims = Jwts.parser()
+                .setSigningKey(SecurityConstants.TOKEN_SECRET)
+                .parseClaimsJws(verificationToken)
+                .getBody();
+
+        String email = claims.getSubject();
+        UserEntity userFound = userRepository.findByEmail(email);
+
+        if (userFound != null){
+            userFound.setVerification_token(null);
+            userFound.setPassword(bCryptPasswordEncoder.encode(newPassword));
+            userRepository.save(userFound);
+            return true;
+        }
+
+
+
+        return false;
+    }
+
+    @Override
+    public boolean disableUser(String email) {
+        UserEntity user = userRepository.findByEmail(email);
+        if (user != null){
+            user.setEnabled(false);
+            user.setLocked(true);
+            userRepository.save(user);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean enableUser(String email) {
+        UserEntity user = userRepository.findByEmail(email);
+        if (user != null){
+            user.setEnabled(true);
+            user.setLocked(false);
+            userRepository.save(user);
+            return true;
+        }
+        return false;
     }
 
 

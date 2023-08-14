@@ -35,7 +35,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests().antMatchers("/index").permitAll();
         http.authorizeRequests().antMatchers("/index/").permitAll();
         http.authorizeRequests().antMatchers("/.js", "/.css", "/.html", "/.txt", "/.png", "/.ico", "/.woff", "/.woff2", "/*.ttf").permitAll();
-        http.authorizeRequests().antMatchers("/users/forgetPassword").permitAll();
+        http.authorizeRequests().antMatchers("/users/forgotPassword").permitAll();
         http.authorizeRequests().antMatchers("/users/resetPassword").permitAll();
         http.authorizeRequests().antMatchers("/users/registration").permitAll();
         http.authorizeRequests().antMatchers("/users/verifyEmail").permitAll();

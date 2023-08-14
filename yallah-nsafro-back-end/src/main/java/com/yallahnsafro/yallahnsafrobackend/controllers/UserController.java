@@ -1,15 +1,12 @@
 package com.yallahnsafro.yallahnsafrobackend.controllers;
 
 import com.yallahnsafro.yallahnsafrobackend.entities.ObjectMapperType;
-import com.yallahnsafro.yallahnsafrobackend.exceptions.UserException;
-import com.yallahnsafro.yallahnsafrobackend.responses.ErrorMessages;
+
 import com.yallahnsafro.yallahnsafrobackend.security.SecurityConstants;
 import com.yallahnsafro.yallahnsafrobackend.services.UserService;
 import com.yallahnsafro.yallahnsafrobackend.shared.dto.UserDto;
 import com.yallahnsafro.yallahnsafrobackend.utils.UserResponse;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-import org.apache.commons.lang.time.DateUtils;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -17,14 +14,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import javax.mail.MessagingException;
-import javax.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.StringJoiner;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import java.util.*;
+
 
 @RestController
 @RequestMapping(value = "/users")
@@ -32,10 +24,16 @@ public class UserController {
 
     @Value("${url}")
     private String url;
+
+
     @Value("${company.name}")
     private String company;
+
+
     @Value("${login.token.expiry_minutes}")
     private int restPassword_expiring_min;
+
+
     @Autowired
     UserService userService;
 
@@ -96,25 +94,44 @@ public class UserController {
     }
 
     @PostMapping("/forgotPassword")
-    public boolean forgotPassword(@RequestParam String email, HttpServletResponse response) throws MessagingException{
-        try {
-            UserDto user = userService.getUserForLogin(email);
-            if (user != null){
-                String jwtToken = Jwts.builder()
-                        .setExpiration(DateUtils.addMinutes(new Date(), restPassword_expiring_min))
-                        .signWith(SignatureAlgorithm.HS512, SecurityConstants.TOKEN_SECRET)
-                        .claim("email", email)
-                        .compact();
+    public boolean forgotPassword(@RequestBody Map<String, String> requestBody) {
+        String email = requestBody.get("email");
+        if (userService.forgotPassword(email))
                 return true;
-            } else {
-            throw new UserException(ErrorMessages.INTERNAL_SERVER_ERROR.getErrorMessage());
-        }
-        }catch (Exception ex) {
-            Logger.getLogger(UserController.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        throw new UserException(ErrorMessages.RECORD_ALREADY_EXISTS.getErrorMessage());
 
+        return false;
     }
+
+    @PostMapping("/resetPassword")
+    public boolean resetPassword(@RequestBody Map<String, String> requestBody){
+
+        String newPassword = requestBody.get("newPassword");
+        String verificationToken = requestBody.get("verificationToken");
+        if (userService.resetPassword(newPassword, verificationToken))
+            return true;
+        return false;
+    }
+
+    @PreAuthorize("hasAuthority('" + SecurityConstants.USER_ROLE_ADMIN + "')")
+    @PostMapping("/disableUser")
+    public boolean disableUser(@RequestBody Map<String, String> requestBody){
+        String email = requestBody.get("email");
+        if (userService.disableUser(email))
+            return true;
+
+        return false;
+    }
+
+    @PreAuthorize("hasAuthority('" + SecurityConstants.USER_ROLE_ADMIN + "')")
+    @PostMapping("/enableUser")
+    public boolean enableUser(@RequestBody Map<String, String> requestBody){
+        String email = requestBody.get("email");
+        if (userService.enableUser(email))
+            return true;
+
+        return false;
+    }
+
 
 
 }

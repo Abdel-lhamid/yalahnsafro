@@ -1,5 +1,6 @@
 package com.yallahnsafro.yallahnsafrobackend.controllers;
 
+import com.yallahnsafro.yallahnsafrobackend.repositories.TripRepository;
 import com.yallahnsafro.yallahnsafrobackend.services.TripService;
 import com.yallahnsafro.yallahnsafrobackend.shared.dto.TripDto;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,8 +12,11 @@ import java.util.List;
 @RestController
 @RequestMapping("/trips")
 public class TripController {
-    //@Autowired(required=true)
-    //TripService tripService;
+    @Autowired
+    TripService tripService;
+
+    @Autowired
+    TripRepository tripRepository;
 
 
     @GetMapping()
@@ -30,7 +34,9 @@ public class TripController {
 
     @PostMapping()
     public String createTrip(@RequestBody TripDto tripToCreate){
-        //TripDto newTrip = tripService.createTrip(tripToCreate);
+        TripDto newTrip = tripService.createTrip(tripToCreate);
+
+
         return null;
     }
     @DeleteMapping()

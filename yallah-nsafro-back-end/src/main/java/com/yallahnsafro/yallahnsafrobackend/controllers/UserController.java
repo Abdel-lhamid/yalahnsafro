@@ -1,15 +1,12 @@
 package com.yallahnsafro.yallahnsafrobackend.controllers;
 
 import com.yallahnsafro.yallahnsafrobackend.entities.ObjectMapperType;
-import com.yallahnsafro.yallahnsafrobackend.exceptions.UserException;
-import com.yallahnsafro.yallahnsafrobackend.responses.ErrorMessages;
+
 import com.yallahnsafro.yallahnsafrobackend.security.SecurityConstants;
 import com.yallahnsafro.yallahnsafrobackend.services.UserService;
 import com.yallahnsafro.yallahnsafrobackend.shared.dto.UserDto;
 import com.yallahnsafro.yallahnsafrobackend.utils.UserResponse;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-import org.apache.commons.lang.time.DateUtils;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -17,11 +14,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import javax.mail.MessagingException;
-import javax.servlet.http.HttpServletResponse;
+
 import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
 
 @RestController
 @RequestMapping(value = "/users")
@@ -29,10 +24,16 @@ public class UserController {
 
     @Value("${url}")
     private String url;
+
+
     @Value("${company.name}")
     private String company;
+
+
     @Value("${login.token.expiry_minutes}")
     private int restPassword_expiring_min;
+
+
     @Autowired
     UserService userService;
 
@@ -130,6 +131,7 @@ public class UserController {
 
         return false;
     }
+
 
 
 }

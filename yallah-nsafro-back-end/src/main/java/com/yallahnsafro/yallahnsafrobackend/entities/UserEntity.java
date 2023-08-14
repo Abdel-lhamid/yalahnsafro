@@ -14,13 +14,14 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 @Entity
 @Table(name = "users", schema = "yallahnsafro_db")
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 public class UserEntity implements Serializable, UserDetails {
 
@@ -67,6 +68,16 @@ public class UserEntity implements Serializable, UserDetails {
     private String verification_token;
 
     private boolean email_verification_status = false;
+
+    @OneToMany(mappedBy = "organizer")
+    private List<TripEntity> organizedTrips = new ArrayList<>();
+
+    @OneToMany(mappedBy = "customer")
+    private List<BookingEntity> bookings = new ArrayList<>();
+
+    @OneToMany(mappedBy = "customer")
+    private List<ReviewEntity> reviews = new ArrayList<>();
+
 
 
 

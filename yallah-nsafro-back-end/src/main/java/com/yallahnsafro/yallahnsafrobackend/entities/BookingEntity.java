@@ -1,6 +1,8 @@
 package com.yallahnsafro.yallahnsafrobackend.entities;
 
 
+import com.yallahnsafro.yallahnsafrobackend.shared.BookingStatus;
+import com.yallahnsafro.yallahnsafrobackend.shared.UserRole;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
@@ -23,6 +25,10 @@ public class BookingEntity implements Serializable {
 
     private String bookingId;
 
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private BookingStatus status;
+
     @CreationTimestamp
     private LocalDateTime bookingDate;
 
@@ -35,6 +41,9 @@ public class BookingEntity implements Serializable {
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "trip_id", referencedColumnName = "id")
     private TripEntity trip;
+
+    @OneToMany(mappedBy = "booking")
+    private List<ReviewEntity> reviews;
 
 
 

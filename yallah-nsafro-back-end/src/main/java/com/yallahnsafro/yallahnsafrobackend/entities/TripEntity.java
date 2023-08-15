@@ -1,15 +1,19 @@
 package com.yallahnsafro.yallahnsafrobackend.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.yallahnsafro.yallahnsafrobackend.shared.BookingStatus;
+import com.yallahnsafro.yallahnsafrobackend.shared.TripStatus;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -38,20 +42,37 @@ public class TripEntity implements Serializable {
 
 
     @Column(nullable = false)
+    private int availableSeats;
+
+
+    @Column(nullable = false)
     private String departure;
 
 
     @Column(nullable = false)
     private String destination;
 
+
     @Column(nullable = false)
     private Double price;
 
 
-    @Column(nullable = true)
-    private String thumbNailImageUrl;
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private TripStatus status;
 
-    @JsonIgnore
+
+    @CreationTimestamp
+    private LocalDateTime createdAt;
+
+
+
+
+    @OneToMany(mappedBy = "trip", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<TripImagesEntity> images;
+
+
+
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "organizer_id", referencedColumnName = "id")
     private UserEntity organizer;
@@ -60,8 +81,6 @@ public class TripEntity implements Serializable {
     @OneToMany(mappedBy = "trip")
     private List<BookingEntity> bookings;
 
-    @OneToMany(mappedBy = "trip")
-    private List<ReviewEntity> reviews;
 
 
 
@@ -69,15 +88,6 @@ public class TripEntity implements Serializable {
 
 
 
-
-
-
-    /**
-     * @OneToMany (cascade = CascadeType.ALL)
-     * @JoinColumn (name = "trip_id", referencedColumnName = "id")
-     * private List<BookingEntity> bookings;
-     *
-     */
 
 
 }

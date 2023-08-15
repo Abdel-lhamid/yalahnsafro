@@ -23,16 +23,17 @@ public class ReviewEntity implements Serializable {
 
     private String reviewText;
 
-    @JsonIgnore
+    private int stars;
+
     @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "trip_id", referencedColumnName = "id")
-    private TripEntity trip;
+    @JoinColumn(name = "booking_id", referencedColumnName = "id")
+    private BookingEntity booking;
 
 
-    @JsonIgnore
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "customer_id", referencedColumnName = "id")
     private UserEntity customer;
+
 
 
 

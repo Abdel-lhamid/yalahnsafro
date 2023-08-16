@@ -12,7 +12,7 @@ public interface TripService {
 
     TripDto updateTrip(TripDto tripDto);
 
-    void deleteTrip(TripDto tripDto);
+    boolean deleteTrip(TripDto tripDto);
 
     List<TripDto> getAllTrips();
 

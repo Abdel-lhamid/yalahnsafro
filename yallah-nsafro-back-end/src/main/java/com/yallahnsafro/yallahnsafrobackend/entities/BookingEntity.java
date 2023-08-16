@@ -21,7 +21,7 @@ public class BookingEntity implements Serializable {
 
     @Id
     @GeneratedValue
-    private Long id;
+    private long id;
 
     private String bookingId;
 

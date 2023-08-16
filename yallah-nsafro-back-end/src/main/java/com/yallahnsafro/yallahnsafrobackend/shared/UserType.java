@@ -1,4 +1,4 @@
-package com.yallahnsafro.yallahnsafrobackend.services;
+package com.yallahnsafro.yallahnsafrobackend.shared;
 
 public enum UserType {
     ADMIN,

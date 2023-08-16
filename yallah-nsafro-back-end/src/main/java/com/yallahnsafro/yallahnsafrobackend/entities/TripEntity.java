@@ -1,15 +1,9 @@
 package com.yallahnsafro.yallahnsafrobackend.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.yallahnsafro.yallahnsafrobackend.shared.BookingStatus;
 import com.yallahnsafro.yallahnsafrobackend.shared.TripStatus;
 import lombok.Data;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -27,59 +21,39 @@ public class TripEntity implements Serializable {
     @Id
     @GeneratedValue
     private long id;
-
-
     @Column (nullable = false)
     private String tripId;
-
-
     @Column (nullable = false, length = 100)
     private String title;
-
-
     @Column(nullable = false, length = 5000)
     private String description;
-
-
     @Column(nullable = false)
     private int availableSeats;
 
-
+    @ManyToOne
+    @JoinColumn(name = "depart_id", referencedColumnName = "id")
+    private DepartEntity depart;
+    @ManyToOne
+    @JoinColumn(name = "destination_id", referencedColumnName = "id")
+    private DestinationEntity destination;
     @Column(nullable = false)
-    private String departure;
-
-
-    @Column(nullable = false)
-    private String destination;
-
-
-    @Column(nullable = false)
-    private Double price;
-
-
+    private float price;
+    @Column
+    private float discountedPrice;
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private TripStatus status;
-
-
     @CreationTimestamp
     private LocalDateTime createdAt;
-
-
-
-
-    @OneToMany(mappedBy = "trip", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<TripImagesEntity> images;
-
-
-
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "organizer_id", referencedColumnName = "id")
     private UserEntity organizer;
-
-
+    @OneToMany(mappedBy = "trip", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<TripImageEntity> images;
     @OneToMany(mappedBy = "trip")
     private List<BookingEntity> bookings;
+    private LocalDateTime tripDate;
+    private LocalDateTime reservationEndDate;
 
 
 

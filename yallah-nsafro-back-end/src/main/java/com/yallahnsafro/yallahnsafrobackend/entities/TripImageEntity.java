@@ -11,7 +11,7 @@ import java.io.Serializable;
 @Table(name = "trip_images", schema = "yallahnsafro_db")
 @Data
 @NoArgsConstructor
-public class TripImagesEntity implements Serializable {
+public class TripImageEntity implements Serializable {
 
     @Id
     @GeneratedValue

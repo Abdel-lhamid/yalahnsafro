@@ -32,7 +32,7 @@ YalahNsafro is a web application that connects travelers with travel agencies/or
   - HTML, CSS, JavaScript
 
 - Backend:
-  - Java 8
+  - Java 17
   - Spring Boot 2.7.x
   - Spring Data JPA
   - MySQL (Database)

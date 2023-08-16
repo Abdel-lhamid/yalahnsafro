@@ -25,7 +25,8 @@ public class TripServiceImpl implements TripService {
     }
 
     @Override
-    public void deleteTrip(TripDto tripDto) {
+    public boolean deleteTrip(TripDto tripDto) {
+        return false;
 
     }
 

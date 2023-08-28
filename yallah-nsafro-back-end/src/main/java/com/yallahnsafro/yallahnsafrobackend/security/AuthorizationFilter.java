@@ -24,7 +24,6 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureException;
 import io.jsonwebtoken.UnsupportedJwtException;
-import java.util.Map;
 
 
 public class AuthorizationFilter extends BasicAuthenticationFilter {;
@@ -79,7 +78,7 @@ public class AuthorizationFilter extends BasicAuthenticationFilter {;
 
             if (user != null) {
                 UserService userService = (UserService) SpringApplicationContext.getBean("userServiceImpl");
-                UserDto userDto = userService.getUserForLogin(user);
+                UserDto userDto = userService.getUserByEmail(user);
                 Collection<GrantedAuthority> authorities = new ArrayList<>();
 
                 authorities.add(new SimpleGrantedAuthority(userDto.getRole().name()));

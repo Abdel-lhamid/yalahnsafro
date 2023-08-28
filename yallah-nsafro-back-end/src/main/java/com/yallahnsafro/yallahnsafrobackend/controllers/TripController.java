@@ -6,6 +6,8 @@ import com.yallahnsafro.yallahnsafrobackend.shared.dto.TripDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
+
 @RestController
 @RequestMapping("/trips")
 public class TripController {
@@ -18,8 +20,9 @@ public class TripController {
 
 
     @PostMapping("/createTrip")
-    public TripDto createTrip(@RequestBody TripDto tripToCreate){
-        TripDto tripCreated = tripService.createTrip(tripToCreate);
+    public TripDto createTrip(@RequestBody TripDto tripToCreate, Principal principal){
+        String userEmail = principal.getName();
+        TripDto tripCreated = tripService.createTrip(tripToCreate, userEmail);
 
         return tripCreated;
     }

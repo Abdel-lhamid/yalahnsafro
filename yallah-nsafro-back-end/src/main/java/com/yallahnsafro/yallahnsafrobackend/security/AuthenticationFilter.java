@@ -58,7 +58,7 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authentication) throws IOException, ServletException {
         String email = ((User) authentication.getPrincipal()).getUsername();
         UserService userService = (UserService) SpringApplicationContext.getBean("userServiceImpl");
-        UserDto userDtoLogged = userService.getUserForLogin(email);
+        UserDto userDtoLogged = userService.getUserByEmail(email);
         User springUser = ((User) authentication.getPrincipal());
         Algorithm algorithm = Algorithm.HMAC256(SecurityConstants.TOKEN_SECRET.getBytes(StandardCharsets.UTF_8));
 

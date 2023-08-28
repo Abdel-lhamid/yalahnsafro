@@ -29,7 +29,7 @@ public class TripDto implements Serializable {
     private double discountedPrice;
     private TripStatus status;
     private LocalDateTime createdAt;
-    private String organizer_id;
+    private UserDto organizer;
     private List<ImageDto> images;
     private List<BookingDto> bookings;
     private Date tripStartDate;

@@ -74,7 +74,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
             throw new RuntimeException("email already exists");
         }
         //Generate userID, we have created a class utils and defined a method generate
-        userDto.setUserId(util.generateUserId(32));
+        userDto.setUserId(util.generateCustomId(32));
         //enabled
         userDto.setEnabled(true);
         userDto.setLocked(false);
@@ -271,7 +271,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         return userDto;
     }
 
-    public UserDto getUserForLogin(String email) {
+    public UserDto getUserByEmail(String email) {
         UserEntity userEntity = userRepository.findByEmail(email);
 
         if(userEntity == null)

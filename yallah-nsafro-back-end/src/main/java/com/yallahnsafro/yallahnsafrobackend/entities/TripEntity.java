@@ -47,10 +47,10 @@ public class TripEntity implements Serializable {
 
     @CreationTimestamp
     private LocalDateTime createdAt;
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "organizer_id", referencedColumnName = "id")
     private UserEntity organizer;
-    @OneToMany(mappedBy = "trip")
+    @OneToMany(mappedBy = "trip", cascade = CascadeType.ALL)
     private List<ImageEntity> images;
     @OneToMany(mappedBy = "trip")
     private List<BookingEntity> bookings;

@@ -21,9 +21,8 @@ public class ImageEntity implements Serializable {
 
     private boolean isMain;
 
-
     @ManyToOne
-    @JoinColumn(name = "trip_id")
+    @JoinColumn(name = "trip_id", referencedColumnName = "id")
     private TripEntity trip;
 
 

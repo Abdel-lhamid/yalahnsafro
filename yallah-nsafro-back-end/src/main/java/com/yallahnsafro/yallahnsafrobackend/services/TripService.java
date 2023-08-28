@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface TripService {
 
-    TripDto createTrip(TripDto tripDto);
+    TripDto createTrip(TripDto tripDto, String userEmail);
 
     TripDto getTripById(long tripId);
 

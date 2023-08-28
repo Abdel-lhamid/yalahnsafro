@@ -10,7 +10,7 @@ public class Utils {
     private final Random RANDOM = new SecureRandom();
     private final String alfa = "1230654789azertyuiopqsdfghjklmAZERTYUIOPQSDFGHJKLMQSDFGHJKLMWXCVBN";
 
-    public String generateUserId(int length)
+    public String generateCustomId(int length)
     {
         StringBuilder returnValue = new StringBuilder(length);
 
@@ -20,4 +20,5 @@ public class Utils {
 
         return new String(returnValue);
     }
+    
 }

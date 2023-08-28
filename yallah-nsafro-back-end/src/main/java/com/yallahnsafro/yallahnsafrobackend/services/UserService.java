@@ -5,7 +5,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
-import javax.mail.MessagingException;
 import java.util.List;
 
 public interface UserService extends UserDetailsService {
@@ -17,14 +16,14 @@ public interface UserService extends UserDetailsService {
 
     UserDto updateUser(UserDto userDto);
     boolean deleteUser(String userId);
-    List<UserDto> getAllUsers();
+    List<UserDto> getAllUsers(int page, int limit);
 
     @Override
     UserDetails loadUserByUsername(String email) throws UsernameNotFoundException;
 
     UserDto getUserByUserId(String UserId);
 
-    UserDto getUserForLogin(String email);
+    UserDto getUserByEmail(String email);
 
     boolean verifyEmail(String verificationToken);
 

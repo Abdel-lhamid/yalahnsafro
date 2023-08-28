@@ -1,23 +1,31 @@
 package com.yallahnsafro.yallahnsafrobackend.controllers;
 
-import com.yallahnsafro.yallahnsafrobackend.repositories.TripRepository;
+import com.yallahnsafro.yallahnsafrobackend.services.ImageService;
 import com.yallahnsafro.yallahnsafrobackend.services.TripService;
 import com.yallahnsafro.yallahnsafrobackend.shared.dto.TripDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.security.Principal;
 
 @RestController
 @RequestMapping("/trips")
 public class TripController {
     @Autowired
     TripService tripService;
-
     @Autowired
-    TripRepository tripRepository;
+    ImageService imageService;
 
+
+
+
+    @PostMapping("/createTrip")
+    public TripDto createTrip(@RequestBody TripDto tripToCreate, Principal principal){
+        String userEmail = principal.getName();
+        TripDto tripCreated = tripService.createTrip(tripToCreate, userEmail);
+
+        return tripCreated;
+    }
 
     @GetMapping()
     public String getAllTrips(){
@@ -32,13 +40,7 @@ public class TripController {
         return null;
     }
 
-    @PostMapping()
-    public String createTrip(@RequestBody TripDto tripToCreate){
-        TripDto newTrip = tripService.createTrip(tripToCreate);
 
-
-        return null;
-    }
     @DeleteMapping()
     public String deleteTrip(@RequestBody TripDto tripDto){
         return null;

@@ -1,6 +1,7 @@
 package com.yallahnsafro.yallahnsafrobackend;
 
 import com.yallahnsafro.yallahnsafrobackend.shared.SpringApplicationContext;
+import org.modelmapper.ModelMapper;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -20,6 +21,11 @@ public class YallahNsafroBackEndApplication {
 	@Bean
 	public SpringApplicationContext springApplicationContext() {
 		return new SpringApplicationContext();
+	}
+
+	@Bean
+	public ModelMapper modelMapper() {
+		return new ModelMapper();
 	}
 
 

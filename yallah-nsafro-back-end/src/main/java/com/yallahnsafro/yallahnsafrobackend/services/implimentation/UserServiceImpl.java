@@ -15,6 +15,9 @@ import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -71,7 +74,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
             throw new RuntimeException("email already exists");
         }
         //Generate userID, we have created a class utils and defined a method generate
-        userDto.setUserId(util.generateUserId(32));
+        userDto.setUserId(util.generateCustomId(32));
         //enabled
         userDto.setEnabled(true);
         userDto.setLocked(false);
@@ -245,16 +248,18 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
-    public List<UserDto> getAllUsers() {
-        UserDto temp = new UserDto();
-        List<UserEntity> allUsersEntity = (List<UserEntity>) userRepository.findAll();
-        List<UserDto> allUsersDto = new ArrayList<>();
-        for (UserEntity userEntity : allUsersEntity){
+    public List<UserDto> getAllUsers(int page, int limit) {
+        if (page > 0) page -= 1;
+        List<UserDto> usersDto = new ArrayList<>();
+        Pageable pageableRequest = (Pageable) PageRequest.of(page, limit);
+        Page<UserEntity> userPage = userRepository.findAll(pageableRequest);
+        List<UserEntity> users = userPage.getContent();
+        for (UserEntity userEntity : users) {
             UserDto userDto = new UserDto();
             BeanUtils.copyProperties(userEntity, userDto);
-            allUsersDto.add(userDto);
+            usersDto.add(userDto);
         }
-        return (allUsersDto);
+        return usersDto;
     }
 
     @Override
@@ -266,7 +271,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         return userDto;
     }
 
-    public UserDto getUserForLogin(String email) {
+    public UserDto getUserByEmail(String email) {
         UserEntity userEntity = userRepository.findByEmail(email);
 
         if(userEntity == null)

@@ -3,15 +3,18 @@ package com.yallahnsafro.yallahnsafrobackend.shared.dto;
 import com.yallahnsafro.yallahnsafrobackend.shared.TripStatus;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 
 @Getter
 @Setter
+@ToString
 public class TripDto implements Serializable {
     private static final long serialVersionUID = 6407688734661549517L;
 
@@ -20,18 +23,18 @@ public class TripDto implements Serializable {
     private String title;
     private String description;
     private int availableSeats;
-    private DepartDto depart;
-    private DestinationDto destination;
-    private float price;
-    private float discountedPrice;
-    @Enumerated(EnumType.STRING)
+    private String depart;
+    private String destination;
+    private double price;
+    private double discountedPrice;
     private TripStatus status;
     private LocalDateTime createdAt;
     private UserDto organizer;
-    private List<TripImageDto> images;
+    private List<ImageDto> images;
     private List<BookingDto> bookings;
-    private LocalDateTime tripDate;
-    private LocalDateTime reservationEndDate;
+    private Date tripStartDate;
+    private Date tripEndDate;
+    private Date dateFinReservation;
 
 
 }

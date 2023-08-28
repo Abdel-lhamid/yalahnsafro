@@ -65,8 +65,10 @@ public class UserEntity implements Serializable, UserDetails {
     @Column(nullable = false)
     private boolean enabled = true;
 
+    @Column
     private String verification_token;
 
+    @Column
     private boolean email_verification_status = false;
 
     @OneToMany(mappedBy = "organizer")
@@ -77,6 +79,10 @@ public class UserEntity implements Serializable, UserDetails {
 
     @OneToMany(mappedBy = "customer")
     private List<ReviewEntity> reviews = new ArrayList<>();
+
+    @Column
+    private String profileImageUrl;
+
 
 
 

@@ -58,7 +58,7 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authentication) throws IOException, ServletException {
         String email = ((User) authentication.getPrincipal()).getUsername();
         UserService userService = (UserService) SpringApplicationContext.getBean("userServiceImpl");
-        UserDto userDtoLogged = userService.getUserForLogin(email);
+        UserDto userDtoLogged = userService.getUserByEmail(email);
         User springUser = ((User) authentication.getPrincipal());
         Algorithm algorithm = Algorithm.HMAC256(SecurityConstants.TOKEN_SECRET.getBytes(StandardCharsets.UTF_8));
 
@@ -86,5 +86,22 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
     }
 
+    @Override
+    protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
 
+        String errorMessage = "Le email ou le mot de passe est incorrect. Veuillez réessayer.";
+        if (exception.getMessage().equalsIgnoreCase("User is disabled")) {
+            errorMessage = "Votre compte est désactivé. Veuillez contacter votre agent. ";
+        } else if (exception.getMessage().equalsIgnoreCase("User account has expired")) {
+            errorMessage = "Votre mot de passe a expiré et doit être changé.";
+        } else if (exception.getMessage().equalsIgnoreCase("User account is locked")) {
+            errorMessage = "Votre compte est Bloqué temporairement pour 10 minutes.";
+        } else if (exception.getMessage().equalsIgnoreCase("User credentials have expired")) {
+            errorMessage = "Votre mot de passe a expiré et doit être changé.";
+        }
+        logger.debug("Authentification fail: " + errorMessage);
+        response.setCharacterEncoding("UTF-8");
+        response.getWriter().write(errorMessage);
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+    }
 }

@@ -19,10 +19,16 @@ public class ReviewEntity implements Serializable {
     @GeneratedValue
     private long id;
 
+    @Column
     private String reviewId;
 
+    @Column
     private String reviewText;
 
+    @Column
+    private String reviewImageUrl;
+
+    @Column
     private int stars;
 
     @ManyToOne(cascade = CascadeType.ALL)

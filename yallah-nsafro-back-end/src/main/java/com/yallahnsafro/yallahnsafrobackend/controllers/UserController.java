@@ -51,17 +51,13 @@ public class UserController {
     }
 
     @PreAuthorize("hasAuthority('" + SecurityConstants.USER_ROLE_ADMIN + "')")
-    @GetMapping("/allUsers")
-    public String  getAllUsers()throws Exception {
+    @GetMapping(produces = {"application/json"})
+    public List<UserDto> getAllUsers(@RequestParam(value = "page", defaultValue = "1") int page, @RequestParam(value = "limit", defaultValue = "20") int limit)throws Exception {
         List<UserDto> usersDtoAll = new ArrayList<>();
-        usersDtoAll = userService.getAllUsers();
+        usersDtoAll = userService.getAllUsers(page, limit);
         System.out.println("use get all");
-        StringJoiner users = new StringJoiner(",\n");
-        for (UserDto userDto : usersDtoAll) {
-            users.add(objectMapper.writerWithView(UserResponse.class)
-                            .writeValueAsString(userDto));
-        }
-        return (users.toString());
+
+        return usersDtoAll;
     }
 
     @PostMapping(path = "/registration")

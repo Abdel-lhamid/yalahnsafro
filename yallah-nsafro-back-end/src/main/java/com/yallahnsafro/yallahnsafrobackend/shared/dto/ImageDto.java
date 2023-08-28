@@ -5,7 +5,9 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class DestinationDto {
+public class ImageDto {
     private long id;
-    private String name;
+    private String url;
+    private boolean isMain;
+
 }

@@ -17,7 +17,7 @@ public interface UserService extends UserDetailsService {
 
     UserDto updateUser(UserDto userDto);
     boolean deleteUser(String userId);
-    List<UserDto> getAllUsers();
+    List<UserDto> getAllUsers(int page, int limit);
 
     @Override
     UserDetails loadUserByUsername(String email) throws UsernameNotFoundException;

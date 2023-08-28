@@ -11,24 +11,20 @@ import java.io.Serializable;
 @Table(name = "trip_images", schema = "yallahnsafro_db")
 @Data
 @NoArgsConstructor
-public class TripImageEntity implements Serializable {
+public class ImageEntity implements Serializable {
 
     @Id
     @GeneratedValue
     private long id;
 
+    private String url;
 
-    private String imageUrl;
-
-
-    private boolean isImageMain;
+    private boolean isMain;
 
 
     @ManyToOne
     @JoinColumn(name = "trip_id")
     private TripEntity trip;
-
-
 
 
 

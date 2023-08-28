@@ -8,6 +8,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -30,30 +31,32 @@ public class TripEntity implements Serializable {
     @Column(nullable = false)
     private int availableSeats;
 
-    @ManyToOne
-    @JoinColumn(name = "depart_id", referencedColumnName = "id")
-    private DepartEntity depart;
-    @ManyToOne
-    @JoinColumn(name = "destination_id", referencedColumnName = "id")
-    private DestinationEntity destination;
-    @Column(nullable = false)
-    private float price;
+    private String depart;
+
+    private String destination;
+
+    private String activities;
     @Column
-    private float discountedPrice;
+    private double price;
+    @Column
+    private double discountedPrice;
+
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private TripStatus status;
+
     @CreationTimestamp
     private LocalDateTime createdAt;
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "organizer_id", referencedColumnName = "id")
     private UserEntity organizer;
-    @OneToMany(mappedBy = "trip", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<TripImageEntity> images;
+    @OneToMany(mappedBy = "trip")
+    private List<ImageEntity> images;
     @OneToMany(mappedBy = "trip")
     private List<BookingEntity> bookings;
-    private LocalDateTime tripDate;
-    private LocalDateTime reservationEndDate;
+    private Date tripStartDate;
+    private Date tripEndDate;
+    private Date dateFinReservation;
 
 
 

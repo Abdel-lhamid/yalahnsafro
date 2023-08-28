@@ -11,8 +11,9 @@ public class ReviewDto implements Serializable {
     private long id;
     private String reviewId;
     private String reviewText;
+    private String reviewImageUrl;
     private int stars;
-    private BookingDto booking;
+    private long booking_id;
     private UserDto customer;
 
 

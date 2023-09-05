@@ -66,6 +66,8 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
 
 
+
+
     @Override
     public UserDto registerUser(UserDto userDto) {
         //check if user data exists by email
@@ -229,7 +231,8 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         long id = userDtoUpdated.getId();
         if (userEntityUpdate != null) {
             BeanUtils.copyProperties(userDtoUpdated, userEntityUpdate);
-            userEntityAfterUpdate = userEntityUpdate;
+            userEntityUpdate.setId(id);
+            userEntityAfterUpdate = userRepository.save(userEntityUpdate);
             BeanUtils.copyProperties(userEntityAfterUpdate, userDtoAfterUpdate);
             return (userDtoAfterUpdate);
         }
@@ -251,7 +254,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     public List<UserDto> getAllUsers(int page, int limit) {
         if (page > 0) page -= 1;
         List<UserDto> usersDto = new ArrayList<>();
-        Pageable pageableRequest = (Pageable) PageRequest.of(page, limit);
+        Pageable pageableRequest = PageRequest.of(page, limit);
         Page<UserEntity> userPage = userRepository.findAll(pageableRequest);
         List<UserEntity> users = userPage.getContent();
         for (UserEntity userEntity : users) {

@@ -64,8 +64,6 @@ public class UserController {
     public String registerUser(@RequestBody UserDto userDto) {
         UserDto newUser = userService.registerUser(userDto);
 
-        // email verification
-
         return ("Account Created Successfully");
     }
 

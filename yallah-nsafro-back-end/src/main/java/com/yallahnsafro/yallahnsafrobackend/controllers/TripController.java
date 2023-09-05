@@ -7,16 +7,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 @RequestMapping("/trips")
 public class TripController {
     @Autowired
     TripService tripService;
-    @Autowired
-    ImageService imageService;
-
-
 
 
     @PostMapping("/createTrip")
@@ -28,26 +26,29 @@ public class TripController {
     }
 
     @GetMapping()
-    public String getAllTrips(){
-        //List<TripDto> allTrips = new ArrayList<>();
-       // allTrips = tripService.getAllTrips();
+    public String getAllTrips(@RequestParam(value = "page", defaultValue = "1") int page, @RequestParam(value = "limit", defaultValue = "20") int limit){
+        List<TripDto> allTrips = new ArrayList<>();
+        allTrips = tripService.getAllTrips(page, limit);
         return null;
     }
     @GetMapping("/{tripId}")
-    public String getTripById(@PathVariable long tripId){
-        //TripDto tripDtoById = new TripDto();
-        //tripDtoById = tripService.getTripById(tripId);
-        return null;
+    public TripDto getTripById(@PathVariable long tripId){
+        TripDto tripDtoById = new TripDto();
+        tripDtoById = tripService.getTripById(tripId);
+        return tripDtoById;
     }
 
 
     @DeleteMapping()
-    public String deleteTrip(@RequestBody TripDto tripDto){
-        return null;
+    public boolean deleteTrip(@RequestBody TripDto tripDto){
+        boolean isDeleted = tripService.deleteTrip(tripDto);
+        return isDeleted;
     }
     @PutMapping()
-    public String updateTrip(@RequestBody TripDto tripUpdated){
-        return null;
+    public TripDto updateTrip(@RequestBody TripDto tripUpdated){
+        TripDto tripDto = tripService.updateTrip(tripUpdated);
+
+        return tripDto;
     }
 
 

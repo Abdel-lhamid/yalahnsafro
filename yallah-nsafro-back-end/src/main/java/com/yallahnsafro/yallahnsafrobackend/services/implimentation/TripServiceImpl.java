@@ -12,6 +12,8 @@ import com.yallahnsafro.yallahnsafrobackend.shared.dto.UserDto;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -109,8 +111,17 @@ public class TripServiceImpl implements TripService {
     }
 
     @Override
-    public List<TripDto> getAllTrips() {
-        return null;
+    public List<TripDto> getAllTrips(int page, int limit) {
+        if (page > 0) page -= 1;
+        List<TripDto> tripsDtoAll = new ArrayList<>();
+        Pageable pageableRequest = PageRequest.of(page, limit);
+        List<TripEntity> tripsEntityAll = tripRepository.findAll(pageableRequest).getContent();
+        for (TripEntity tripEntity : tripsEntityAll){
+            TripDto tripDto = new TripDto();
+            BeanUtils.copyProperties(tripEntity, tripDto);
+            tripsDtoAll.add(tripDto);
+        }
+        return tripsDtoAll;
     }
 
     @Override

@@ -19,7 +19,6 @@ YalahNsafro is a web application that connects travelers with travel agencies/or
 - Browse and search for available trips based on criteria like destination, departure, price range, and date.
 - View detailed trip information, including descriptions, images, and pricing.
 - Register and log in as a customer or travel agency/organizer.
-- Social media login integration for quick access.
 - Book trips and provide necessary information to travel agencies/organizers.
 - Leave reviews and ratings for trips and services.
 - Admin panel for managing trips, bookings, and users.

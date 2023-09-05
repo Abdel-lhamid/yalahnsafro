@@ -14,7 +14,7 @@ public interface TripService {
 
     boolean deleteTrip(TripDto tripDto);
 
-    List<TripDto> getAllTrips();
+    List<TripDto> getAllTrips(int page, int limit);
 
     List<TripDto> getAllActiveTrips();
 

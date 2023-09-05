@@ -19,6 +19,7 @@ public class ReviewEntity implements Serializable {
     @GeneratedValue
     private long id;
 
+
     @Column
     private String reviewId;
 
@@ -34,6 +35,9 @@ public class ReviewEntity implements Serializable {
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "booking_id", referencedColumnName = "id")
     private BookingEntity booking;
+
+    @Column()
+    private String tripId = booking.getTrip().getTripId();
 
 
     @ManyToOne(cascade = CascadeType.ALL)
